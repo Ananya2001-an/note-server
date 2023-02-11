@@ -1,7 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const Note = require("../models/notes");
-const cors = require("cors");
 
 router.get("/", async (req, res) => {
   let searchOptions = {};
@@ -17,7 +16,8 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.post("/",cors(), async (req, res) => {
+router.post("/", async (req, res) => {
+  console.log(req.body)
   const note = new Note({
     name: req.body.name,
     note: req.body.note,

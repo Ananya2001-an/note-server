@@ -22,7 +22,7 @@ const assignSchema = new mongoose.Schema({
   },
 
   assignImg: {
-    type: Buffer,
+    type: String,
     required: true,
   },
   createdAt: {

@@ -10,7 +10,7 @@ const noteSchema = new mongoose.Schema({
     required: true,
   },
   cover: {
-    type: Buffer,
+    type: String,
     required: true,
   }
 });
