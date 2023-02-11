@@ -12,18 +12,6 @@ const noteSchema = new mongoose.Schema({
   cover: {
     type: Buffer,
     required: true,
-  },
-  coverType: {
-    type: String,
-    required: true,
-  },
-});
-
-noteSchema.virtual("coverPath").get(function () {
-  if (this.cover != null) {
-    return `data:${this.coverType};charset=utf-8;base64,${this.cover.toString(
-      "base64"
-    )}`;
   }
 });
 

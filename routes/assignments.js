@@ -26,7 +26,7 @@ router.post("/", async (req, res) => {
   });
 
   if (req.body.img != null && req.body.img != "") {
-    saveimg(assign, req.body.img);
+      assignment.assignImg = req.body.img;
   }
 
   try {
@@ -47,7 +47,7 @@ router.put("/:id", async (req, res) => {
     assignment.subject = req.body.subject;
     assignment.priority = req.body.priority;
     if (req.body.img != null && req.body.img != "") {
-      saveimg(assignment, req.body.img);
+      assignment.assignImg = req.body.img
     }
 
     await assignment.save();
@@ -68,14 +68,5 @@ router.delete("/:id", async (req, res) => {
     res.json("Couldn't delete assignment!")
   }
 });
-
-function saveimg(assign, imgencoded) {
-  if (imgencoded == null) return;
-  const imgnew = JSON.parse(imgencoded);
-  if (imgnew != null && imageMimeTypes.includes(imgnew.type)) {
-    assign.assignImg = new Buffer.from(imgnew.data, "base64");
-    assign.assignImgType = imgnew.type;
-  }
-}
 
 module.exports = router;

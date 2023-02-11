@@ -25,23 +25,11 @@ const assignSchema = new mongoose.Schema({
     type: Buffer,
     required: true,
   },
-  assignImgType: {
-    type: String,
-    required: true,
-  },
   createdAt: {
     type: Date,
     required: true,
     default: Date.now,
   },
-});
-
-assignSchema.virtual("assignImgPath").get(function () {
-  if (this.assignImg != null) {
-    return `data:${this.assignImgType};charset=utf-8;base64,${this.assignImg.toString(
-      "base64"
-    )}`;
-  }
 });
 
 module.exports = mongoose.model("Assign", assignSchema);

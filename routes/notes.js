@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Note = require("../models/notes");
+const cors = require("cors");
 
 router.get("/", async (req, res) => {
   let searchOptions = {};
@@ -10,13 +11,13 @@ router.get("/", async (req, res) => {
 
   try {
     const notes = await Note.find(searchOptions);
-    res.json(notes);
+    res.json({ data: notes });
   } catch {
-    res.json("Note not found!");
+    res.json({ data: "Note not found!" });
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/",cors(), async (req, res) => {
   const note = new Note({
     name: req.body.name,
     note: req.body.note,
@@ -26,9 +27,9 @@ router.post("/", async (req, res) => {
   }
   try {
     await note.save();
-    res.json("Note saved successfully!");
+    res.json({ data: "Note saved successfully!" });
   } catch {
-   res.json("Couldn't add note!")
+   res.json({ data: "Couldn't add note!" });
   }
 });
 
@@ -41,14 +42,14 @@ router.put("/:id", async (req, res) => {
     note.note = req.body.note;
 
     if (req.body.img != null && req.body.img != "") {
-      saveimg(note, req.body.img);
+     note.cover = req.body.img;
     }
 
     await note.save();
-    res.json("Note updated successfully!")
+    res.json({ data: "Note updated successfully!" });
 
   } catch {
-    res.json("Couldn't update note!")
+    res.json({ data: "Couldn't update note!" });
   }
 });
 
@@ -57,19 +58,10 @@ router.delete("/:id", async (req, res) => {
   try {
     note = await Note.findById(req.params.id);
     await note.remove();
-    res.json("Note deleted successfully!")
+    res.json({ data: "Note deleted successfully!" });
   } catch {
-    res.json("Couldn't delete note!")
+    res.json({ data: "Couldn't delete note!" });
   }
 });
-
-// function saveimg(note, imgencoded) {
-//   if (imgencoded == null) return;
-//   const imgnew = JSON.parse(imgencoded);
-//   if (imgnew != null) {
-//     note.cover = new Buffer.from(imgnew.data, "base64");
-//     note.coverType = imgnew.type;
-//   }
-// }
 
 module.exports = router;
