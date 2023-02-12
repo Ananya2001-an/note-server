@@ -1,22 +1,23 @@
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-
+const bodyParser = require("body-parser");
 const cors = require('cors')
 const express = require("express");
-const app = express();
-app.use(express.json());
-app.use(
-  cors({origin:'*'})
-);
-const bodyParser = require("body-parser");
-const methodOverride = require("method-override");
-
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(methodOverride("_method"));
-
-
 const mongoose = require("mongoose");
+const methodOverride = require("method-override");
+const app = express();
+const Note = require("./models/notes");
+const Assign = require("./models/assignments");
+
+app.use(bodyParser.urlencoded({extended:false}));
+app.use(
+  cors({
+    origin:'*'
+  })
+);
+app.use(methodOverride("_method"));
+mongoose.set('strictQuery', false);
 mongoose.connect(process.env.DATABASE_URL, { useNewUrlParser: true });
 const db = mongoose.connection;
 
@@ -27,12 +28,146 @@ db.once("open", () => {
   console.log("Connected to Database");
 });
 
-const indexRouter = require("./routes/index");
-const assignmentRouter = require("./routes/assignments");
-const noteRouter = require("./routes/notes");
 
-app.use("/", indexRouter);
-app.use("/assignments", assignmentRouter);
-app.use("/notes", noteRouter);
+app.get('/', async(req, res)=>{
+  let assignments
+  try{
+      assignments = await Assign.find().sort({deadline: 1}).exec()
+  }catch{
+      assignments = []
+  }
+
+  res.json({data: assignments})
+})
+
+
+app.get("/assignments", async (req, res) => {
+  let searchOptions = {};
+  if (req.query.name != null && req.query.name !== "") {
+    searchOptions.name = new RegExp(req.query.name, "i");
+  }
+
+  try {
+    const assignments = await Assign.find(searchOptions);
+    res.json({data: assignments});
+  } catch {
+    res.json({data: "Assignment not found!"});
+  }
+});
+
+
+app.post("/assignments", async (req, res) => {
+  const assignment = new Assign({
+    name: req.body.name,
+    deadline: new Date(req.body.deadline),
+    subject: req.body.subject,
+    priority: req.body.priority,
+  });
+
+  if (req.body.img != "") {
+      assignment.assignImg = req.body.img;
+  }
+
+  try {
+    await assignment.save();
+    res.json({data : "Assignment saved successfully!"})
+  } catch {
+    res.json({data: "Couldn't add assignment!"})
+  }
+});
+
+
+app.put("/assignments/:id", async (req, res) => {
+  let assignment;
+  try {
+    assignment = await Assign.findById(req.params.id);
+    assignment.name = req.body.name;
+    assignment.deadline = new Date(req.body.deadline);
+    assignment.subject = req.body.subject;
+    assignment.priority = req.body.priority;
+    if (req.body.img != null && req.body.img != "") {
+      assignment.assignImg = req.body.img
+    }
+
+    await assignment.save();
+    res.json({data: "Assignment Updated successfully!"});
+
+  } catch {
+    res.json({data: "Couldn't update assignment!"})
+  }
+});
+
+app.delete("/assignments/:id", async (req, res) => {
+  let assignment;
+  try {
+    assignment = await Assign.findById(req.params.id);
+    await assignment.remove();
+    res.json({data : "Assignment deleted successfully!"});
+  } catch {
+    res.json({data : "Couldn't delete assignment!"})
+  }
+});
+
+app.get("/notes", async (req, res) => {
+  let searchOptions = {};
+  if (req.query.name != null && req.query.name !== "") {
+    searchOptions.name = new RegExp(req.query.name, "i");
+  }
+
+  try {
+    const notes = await Note.find(searchOptions);
+    res.json({ data: notes });
+  } catch {
+    res.json({ data: "Note not found!" });
+  }
+});
+
+app.post("/notes", async (req, res) => {
+  console.log(req.body)
+  const note = new Note({
+    name: req.body.name,
+    note: req.body.note,
+  });
+  if (req.body.img != null && req.body.img != "") {
+    note.cover = req.body.img
+  }
+  try {
+    await note.save();
+    res.json({ data: "Note saved successfully!" });
+  } catch {
+   res.json({ data: "Couldn't add note!" });
+  }
+});
+
+
+app.put("/notes/:id", async (req, res) => {
+  let note;
+  try {
+    note = await Note.findById(req.params.id);
+    note.name = req.body.name;
+    note.note = req.body.note;
+
+    if (req.body.img != "") {
+     note.cover = req.body.img;
+    }
+
+    await note.save();
+    res.json({ data: "Note updated successfully!" });
+
+  } catch {
+    res.json({ data: "Couldn't update note!" });
+  }
+});
+
+app.delete("/notes/:id", async (req, res) => {
+  let note;
+  try {
+    note = await Note.findById(req.params.id);
+    await note.remove();
+    res.json({ data: "Note deleted successfully!" });
+  } catch {
+    res.json({ data: "Couldn't delete note!" });
+  }
+});
 
 app.listen(process.env.PORT || 5000);
