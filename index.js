@@ -124,6 +124,7 @@ app.post("/notes", async (req, res) => {
     note.cover = req.body.img;
   }
   try {
+    console.log(note);
     await note.save();
     res.json({ data: "Note saved successfully!" });
   } catch {
