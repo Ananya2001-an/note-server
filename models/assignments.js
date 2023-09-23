@@ -23,7 +23,7 @@ const assignSchema = new mongoose.Schema({
 
   assignImg: {
     type: String,
-    required: true,
+    required: false,
   },
   createdAt: {
     type: Date,
