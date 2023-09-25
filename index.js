@@ -1,6 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const app = express();
+const mongoose = require('mongoose');
 const Note = require("./models/notes");
 const Assign = require("./models/assignments");
 require("dotenv").config();
@@ -13,7 +14,12 @@ app.use(
   })
 );
 
-require('./initDB')();
+// Connect to DB
+mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true, user: process.env.DB_USER, pass: process.env.DB_PASS, dbName: process.env.DB_NAME });
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', () => { console.log('Connected to DB'); });
 
 app.get("/", async (req, res) => {
   let assignments;
