@@ -1,10 +1,9 @@
 const cors = require("cors");
 const express = require("express");
-const mongoose = require("mongoose");
 const app = express();
 const Note = require("./models/notes");
 const Assign = require("./models/assignments");
-require("dotenv").config();
+const dotenv = require("dotenv").config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
