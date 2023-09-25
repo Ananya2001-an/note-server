@@ -3,7 +3,7 @@ const express = require("express");
 const app = express();
 const Note = require("./models/notes");
 const Assign = require("./models/assignments");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

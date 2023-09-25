@@ -1,15 +1,12 @@
 const mongoose = require('mongoose');
-require("dotenv").config();
 
 module.exports = () => {
   mongoose
     .connect(process.env.MONGODB_URI, {
       dbName: process.env.DB_NAME,
       user: process.env.DB_USER,
-      pass: process.env.DB_PASS,
       useNewUrlParser: true,
-      useUnifiedTopology: true,
-      useFindAndModify: false
+      useUnifiedTopology: true
     })
     .then(() => {
       console.log('Mongodb connected....');
