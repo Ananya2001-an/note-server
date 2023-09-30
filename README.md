@@ -50,12 +50,7 @@ This environment is fully on computer and requires each dependency (for example 
 4. You need to run the frontend app `note` to see the changes reflected. Refer the readme of `note` repository to get started with it.
 
 ## License 🛡
-LinkFree is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributing 🛠
-- Contributions make the open source community an amazing place to learn, inspire, and create.
-- Any contributions you make are **truly appreciated**.
-- Let's continue contributing to keep the community active and growing.
+note is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Support 🙏 
 Don't forget to leave a star ⭐️
